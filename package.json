@@ -1,0 +1,19 @@
+{
+  "name": "allanswebterminal",
+  "version": "1.0.0",
+  "description": "A minimal Go web application with database support, migrations, and comprehensive testing.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --require test/setup.js test/**/*.test.js",
+    "coverage": "nyc --include='static/**/*.js' --all --report-dir=coverage --reporter=html --reporter=text mocha --require test/setup.js test/**/*.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.5.0",
+    "jsdom": "^26.1.0",
+    "mocha": "^11.7.1",
+    "nyc": "^17.1.0"
+  }
+}

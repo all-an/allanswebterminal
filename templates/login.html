@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Allan</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>Login</h1>
+            <p>Sign in to save your progress</p>
+            <a href="/projects" class="back-btn">← Back to Projects</a>
+        </header>
+
+        <section class="login-section">
+            <div class="login-card">
+                <form id="loginForm" class="login-form">
+                    <div id="usernameStep" class="form-group">
+                        <label for="username">Enter your username:</label>
+                        <input type="text" id="username" name="username" placeholder="Your username" required>
+                        <button type="button" id="nextBtn" class="btn btn-primary">Next</button>
+                    </div>
+                    <div id="passwordStep" class="form-group" style="display: none;">
+                        <label for="password">Enter your password:</label>
+                        <input type="password" id="password" name="password" placeholder="Your password" required>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="button" id="backBtn" class="btn btn-secondary">Back</button>
+                    </div>
+                </form>
+                
+                <div id="loginMessage" class="message"></div>
+                
+                <div class="auth-links">
+                    <p>Don't have an account? <a href="/register">Register for a new account</a></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/login.js"></script>
+</body>
+</html>

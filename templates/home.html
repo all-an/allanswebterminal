@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allan - Software Engineer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-controls">
+                    <span class="control close"></span>
+                    <span class="control minimize"></span>
+                    <span class="control maximize"></span>
+                </div>
+                <div class="terminal-title">guest@portfolio:~$</div>
+            </div>
+            <div class="terminal-body" id="terminal">
+                <div class="terminal-content" id="terminalContent">
+                    <div class="welcome-message">
+                        <pre class="ascii-art">
+ █████╗ ██╗     ██╗      █████╗ ███╗   ██╗ █  ██████╗
+██╔══██╗██║     ██║     ██╔══██╗████╗  ██║   ██╔════╝
+███████║██║     ██║     ███████║██╔██╗ ██║   ╚█████╗ 
+██╔══██║██║     ██║     ██╔══██║██║╚██╗██║    ╚═══██╗
+██║  ██║███████╗███████╗██║  ██║██║ ╚████║   ██████╔╝
+╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═════╝ 
+
+████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗ █████╗ ██╗     
+╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗██║     
+   ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║███████║██║     
+   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██╔══██║██║     
+   ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██║  ██║███████╗
+   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝
+                        </pre>
+                        <div class="welcome-text">
+                            <p>Welcome to Allan's Terminal Portfolio</p>
+                            <p>Software Engineer • Full-Stack Developer</p>
+                            <br>
+                            <p>Expertise: Java, Go, Python, JavaScript, Cloud Technologies</p>
+                            <p>Focus: Scalable solutions, System design, DevOps</p>
+                            <br>
+                            <p>Type '<span style="color: #0080ff; font-weight: bold;">help</span>' for available commands or just start exploring...</p>
+                            <p>💬 Want to get in touch? Type '<span style="color: #0080ff; font-weight: bold;">message</span>' to send me a message directly.</p>
+                            <p>( Best viewed on Chrome or Firefox on desktop; it also works fine on Android mobile. )</p>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="terminal-line current-line">
+                        <span class="prompt">guest@portfolio:~$</span>
+                        <span id="typedText" class="typed-text"></span>
+                        <span class="cursor">_</span>
+                        <input type="text" id="commandInput" class="command-input" autocomplete="off" autofocus>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Send me a message</h3>
+            <form id="messageForm">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/vim.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>

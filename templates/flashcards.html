@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards - Allan</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>Flashcards</h1>
+            <p>Test your knowledge with timed questions</p>
+            <a href="/projects" class="back-btn">← Back to Projects</a>
+        </header>
+
+        <section class="courses-section">
+            <h3>Choose a Course</h3>
+            <div class="courses-grid">
+                {{range .Courses}}
+                <div class="course-card">
+                    <h4>{{.Name}}</h4>
+                    <p>{{.Description}}</p>
+                    <button class="btn btn-primary start-course" data-course-id="{{.ID}}">Start Course</button>
+                </div>
+                {{else}}
+                <div class="no-courses">
+                    <p>No courses available. Please contact administrator.</p>
+                </div>
+                {{end}}
+            </div>
+            
+            <div class="guest-section">
+                <h3>Or Practice with Individual Questions</h3>
+                <p>Review questions and select which ones to practice</p>
+                <button id="loadGuestQuestions" class="btn btn-secondary">Load Practice Questions</button>
+            </div>
+        </section>
+
+        <section id="questionSelectionSection" class="question-selection-section" style="display: none;">
+            <div class="selection-header">
+                <h3>Select Questions to Practice</h3>
+                <p>Review the questions and answers below, then select which ones you'd like to practice</p>
+                <button id="backToMenu" class="btn btn-secondary">← Back to Menu</button>
+            </div>
+            
+            <div id="questionsPreview" class="questions-preview">
+                <!-- Questions will be loaded here -->
+            </div>
+            
+            <div class="selection-actions">
+                <button id="selectAllQuestions" class="btn btn-secondary">Select All</button>
+                <button id="deselectAllQuestions" class="btn btn-secondary">Deselect All</button>
+                <button id="startSelectedQuestions" class="btn btn-primary" disabled>Start Practice</button>
+            </div>
+        </section>
+
+        <section id="gameSection" class="game-section" style="display: none;">
+            <div class="game-header">
+                <div class="game-progress">
+                    <span id="questionNumber">1</span> of <span id="totalQuestions">10</span>
+                </div>
+                <div class="game-timer">
+                    Time: <span id="timer">30</span>s
+                </div>
+            </div>
+
+            <div class="flashcard">
+                <div class="question-text" id="questionText">
+                    Loading question...
+                </div>
+                <div class="answer-section">
+                    <input type="text" id="answerInput" placeholder="Type your answer here..." disabled>
+                    <button id="submitAnswer" class="btn btn-primary" disabled>Submit Answer</button>
+                </div>
+            </div>
+
+            <div id="feedback" class="feedback" style="display: none;">
+                <div class="feedback-content">
+                    <h4 id="feedbackTitle">Correct!</h4>
+                    <p id="feedbackText">Well done!</p>
+                    <button id="nextQuestion" class="btn btn-primary">Next Question</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="resultsSection" class="results-section" style="display: none;">
+            <div class="results-header">
+                <h2>Game Complete!</h2>
+            </div>
+            <div class="score-summary">
+                <div class="score-item">
+                    <span class="score-label">Score:</span>
+                    <span class="score-value" id="finalScore">0/0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Accuracy:</span>
+                    <span class="score-value" id="finalAccuracy">0%</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Average Time:</span>
+                    <span class="score-value" id="finalAvgTime">0s</span>
+                </div>
+            </div>
+            <div class="results-actions">
+                <button id="playAgain" class="btn btn-primary">Play Again</button>
+                <a href="/projects" class="btn btn-secondary">Back to Projects</a>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/flashcards.js"></script>
+</body>
+</html>

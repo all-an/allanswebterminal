@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <body>
+    <textarea id="code">print("hello from pyodide")</textarea>
+    <button id="run" disabled>Loading Python...</button>
+    <pre id="out">Loading Pyodide...</pre>
+    <script type="module">
+      import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.28.1/full/pyodide.mjs";
+      
+      async function initPyodide() {
+        try {
+          document.getElementById('out').textContent = 'Downloading Pyodide (this may take 10-30 seconds)...';
+          console.log('Starting to load Pyodide...');
+          
+          const pyodide = await loadPyodide();
+          console.log('Pyodide loaded successfully!');
+          
+          // Update UI when ready
+          document.getElementById('run').disabled = false;
+          document.getElementById('run').textContent = 'Run';
+          document.getElementById('out').textContent = 'Ready! Click Run to execute Python code.';
+          
+          document.getElementById('run').onclick = async () => {
+            const code = document.getElementById('code').value;
+            document.getElementById('out').textContent = 'Running...';
+            try {
+              // Capture stdout
+              let output = "";
+              pyodide.runPython(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+              `);
+              
+              const result = await pyodide.runPythonAsync(code);
+              
+              // Get captured output
+              const stdout = pyodide.runPython("sys.stdout.getvalue()");
+              
+              // Show both stdout and return value
+              let displayText = stdout;
+              if (result !== undefined && result !== null) {
+                if (displayText) displayText += "\n";
+                displayText += String(result);
+              }
+              
+              document.getElementById('out').textContent = displayText || "(no output)";
+              
+              // Reset stdout
+              pyodide.runPython("sys.stdout = sys.__stdout__");
+            } catch (e) { 
+              document.getElementById('out').textContent = `Error: ${e.toString()}`;
+              // Reset stdout on error too
+              try { pyodide.runPython("sys.stdout = sys.__stdout__"); } catch {}
+            }
+          };
+        } catch (error) {
+          console.error('Failed to load Pyodide:', error);
+          document.getElementById('out').textContent = `Failed to load Python: ${error.toString()}`;
+          document.getElementById('run').textContent = 'Failed to Load';
+        }
+      }
+      
+      initPyodide();
+    </script>
+  </body>
+</html>
