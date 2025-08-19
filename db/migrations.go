@@ -171,6 +171,81 @@ var migrations = []Migration{
 		`,
 		Down: `DROP TABLE IF EXISTS user_files;`,
 	},
+	{
+		Version: 11,
+		Name:    "create_iam_users_table",
+		Up: `
+			CREATE TABLE IF NOT EXISTS iam_users (
+				id SERIAL PRIMARY KEY,
+				account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
+				user_name VARCHAR(64) NOT NULL,
+				user_id VARCHAR(128) UNIQUE NOT NULL,
+				arn VARCHAR(256) NOT NULL,
+				path VARCHAR(512) DEFAULT '/',
+				permissions_boundary VARCHAR(256),
+				tags JSONB DEFAULT '{}',
+				created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				password_last_used TIMESTAMP,
+				mfa_enabled BOOLEAN DEFAULT FALSE,
+				access_keys_count INTEGER DEFAULT 0,
+				attached_policies JSONB DEFAULT '[]',
+				inline_policies JSONB DEFAULT '{}',
+				groups JSONB DEFAULT '[]',
+				status VARCHAR(20) DEFAULT 'Active',
+				UNIQUE(account_id, user_name)
+			);
+		`,
+		Down: `DROP TABLE IF EXISTS iam_users;`,
+	},
+	{
+		Version: 12,
+		Name:    "create_iam_roles_table", 
+		Up: `
+			CREATE TABLE IF NOT EXISTS iam_roles (
+				id SERIAL PRIMARY KEY,
+				account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
+				role_name VARCHAR(64) NOT NULL,
+				role_id VARCHAR(128) UNIQUE NOT NULL,
+				arn VARCHAR(256) NOT NULL,
+				path VARCHAR(512) DEFAULT '/',
+				description TEXT,
+				trust_policy JSONB NOT NULL,
+				permissions_boundary VARCHAR(256),
+				tags JSONB DEFAULT '{}',
+				created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				max_session_duration INTEGER DEFAULT 3600,
+				attached_policies JSONB DEFAULT '[]',
+				inline_policies JSONB DEFAULT '{}',
+				UNIQUE(account_id, role_name)
+			);
+		`,
+		Down: `DROP TABLE IF EXISTS iam_roles;`,
+	},
+	{
+		Version: 13,
+		Name:    "create_iam_policies_table",
+		Up: `
+			CREATE TABLE IF NOT EXISTS iam_policies (
+				id SERIAL PRIMARY KEY,
+				account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
+				policy_name VARCHAR(128) NOT NULL,
+				policy_id VARCHAR(128) UNIQUE NOT NULL,
+				arn VARCHAR(256) NOT NULL,
+				path VARCHAR(512) DEFAULT '/',
+				description TEXT,
+				policy_document JSONB NOT NULL,
+				default_version_id VARCHAR(128) DEFAULT 'v1',
+				attachment_count INTEGER DEFAULT 0,
+				permissions_boundary_usage_count INTEGER DEFAULT 0,
+				is_attachable BOOLEAN DEFAULT TRUE,
+				tags JSONB DEFAULT '{}',
+				created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				UNIQUE(account_id, policy_name)
+			);
+		`,
+		Down: `DROP TABLE IF EXISTS iam_policies;`,
+	},
 }
 
 func CreateMigrationsTable() error {

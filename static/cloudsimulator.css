@@ -1,0 +1,208 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0000AA;
+    font-family: 'Courier New', monospace;
+    color: #ffffff;
+    overflow: hidden;
+    height: 100vh;
+    font-size: 14px;
+}
+
+.bios-screen {
+    height: 100vh;
+    background: #0000AA;
+    padding: 0;
+}
+
+.bios-header {
+    background: #0000AA;
+    color: #ffffff;
+    padding: 5px 0;
+    text-align: center;
+    border-bottom: 1px solid #ffffff;
+    font-weight: bold;
+}
+
+.bios-title {
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.bios-version {
+    font-size: 12px;
+    color: #cccccc;
+}
+
+.bios-menu {
+    display: flex;
+    background: #008888;
+    color: #000000;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.menu-item {
+    padding: 3px 15px;
+    border-right: 1px solid #000000;
+    cursor: pointer;
+}
+
+.menu-item.active {
+    background: #ffffff;
+    color: #000000;
+}
+
+.bios-content {
+    display: flex;
+    height: calc(100vh - 100px);
+}
+
+.services-list {
+    width: 250px;
+    background: #0000AA;
+    border-right: 1px solid #ffffff;
+    padding: 10px 5px;
+    overflow-y: auto;
+}
+
+.service-item {
+    display: block;
+    padding: 3px 8px;
+    cursor: pointer;
+    margin-bottom: 1px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.service-item:hover,
+.service-item.selected {
+    background: #ffffff;
+    color: #000000;
+}
+
+.service-details {
+    flex: 1;
+    background: #0000AA;
+    padding: 10px;
+    color: #ffffff;
+    font-size: 12px;
+}
+
+.service-name {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+    text-decoration: underline;
+}
+
+.service-description {
+    margin-bottom: 10px;
+    color: #cccccc;
+}
+
+.service-commands {
+    margin-top: 15px;
+}
+
+.service-commands h4 {
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+.command-item {
+    padding: 1px 0;
+    cursor: pointer;
+    color: #cccccc;
+}
+
+.command-item:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.service-status {
+    margin-top: 10px;
+    font-size: 10px;
+}
+
+.status-online {
+    color: #00ff00;
+}
+
+.status-offline {
+    color: #ff0000;
+}
+
+.bios-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #008888;
+    color: #000000;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: bold;
+    border-top: 1px solid #000000;
+}
+
+.footer-commands {
+    display: flex;
+    justify-content: space-between;
+}
+
+.terminal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    z-index: 1000;
+}
+
+.terminal-window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 70%;
+    background: #000000;
+    border: 2px solid #ffffff;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.terminal-content {
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.blinking {
+    animation: blink 1s infinite;
+}

@@ -37,7 +37,15 @@ const terminalState = {
         step: 'username', // 'username', 'password'
         username: '',
         password: ''
-    }
+    },
+    vimMode: false,
+    vimFilename: '',
+    vimContent: '',
+    vimCursorRow: 0,
+    vimCursorCol: 0,
+    vimCurrentMode: 'normal', // 'normal', 'insert', 'command'
+    vimCommandBuffer: '',
+    vimLastKey: ''
 };
 
 // Available commands
@@ -106,13 +114,9 @@ const commands = {
         description: 'Send me a message',
         execute: () => startMessageMode()
     },
-    'vim-mode': {
-        description: 'Toggle Vim-style navigation for entire page',
-        execute: () => toggleVimMode()
-    },
-    keys: {
-        description: 'Show Vim key bindings (when enabled)',
-        execute: () => showVimKeyBindings()
+    vim: {
+        description: 'Open vim editor',
+        execute: (args) => openVimEditor(args[0])
     }
 };
 
@@ -143,19 +147,11 @@ function getFlashcardsDirectoryFiles() {
     ];
 }
 
-function getUnleashedJSDirectoryFiles() {
+function getCloudSimulatorDirectoryFiles() {
     return [
         '../',
         'README.md',
-        'main.go',
-        'compiler/',
-        'runtime/',
-        'examples/',
-        'tests/',
-        'c-bindings/',
-        'Makefile',
-        'go.mod',
-        'go.sum'
+        'name-convention.md'
     ];
 }
 
@@ -185,7 +181,7 @@ function getProjectsDirectoryFiles() {
     return [
         '../',
         'flashcards/',
-        'unleashedjs/',
+        'cloudsimulator/',
         'text-adventure/',
         'portfolio-terminal/',
         'README.md'
@@ -200,8 +196,8 @@ function getDirectoryFiles(directory) {
             return getProjectsDirectoryFiles();
         case 'projects/flashcards':
             return getFlashcardsDirectoryFiles();
-        case 'projects/unleashedjs':
-            return getUnleashedJSDirectoryFiles();
+        case 'projects/cloudsimulator':
+            return getCloudSimulatorDirectoryFiles();
         case 'projects/text-adventure':
             return getTextAdventureDirectoryFiles();
         case 'projects/portfolio-terminal':
@@ -232,11 +228,7 @@ function listDirectorySync() {
    
    Commands:
    • login <username> <password>     - Login to your account
-   • register <username> <password>  - Create a new account
-   
-   Example:
-   • register john mypassword
-   • login john mypassword`;
+   • register <username> <password>  - Create a new account`;
     }
     
     return files.length > 0 ? files.join('  ') : 'No files found in this directory.';
@@ -244,7 +236,9 @@ function listDirectorySync() {
 
 async function listDirectoryAsync() {
     try {
-        const response = await fetch('/api/files/list');
+        const response = await fetch('/api/files/list', {
+            credentials: 'include'
+        });
         if (response.ok) {
             const userFiles = await response.json();
             
@@ -253,29 +247,25 @@ async function listDirectoryAsync() {
                 addOutput(`📁 Your Saved Files:
    ${userFileNames}
    
-   Use ':o filename' in vim mode to edit files
-   Type 'vim-mode' to enable vim editor`);
+   Use 'vim filename' to edit files`);
             } else {
                 addOutput(`📁 Your Saved Files:
    No saved files yet.
    
-   Use ':o filename.py' in vim mode to create and edit files
-   Type 'vim-mode' to enable vim editor`);
+   Use 'vim filename.py' to create and edit files`);
             }
         } else {
             addOutput(`📁 Your Saved Files:
    Directory appears to be empty.
    
-   Use ':o filename.py' in vim mode to create and edit files
-   Type 'vim-mode' to enable vim editor`);
+   Use 'vim filename.py' to create and edit files`);
         }
     } catch (error) {
         console.error('Error fetching user files:', error);
         addOutput(`📁 Your Saved Files:
    Directory appears to be empty.
    
-   Use ':o filename.py' in vim mode to create and edit files
-   Type 'vim-mode' to enable vim editor`);
+   Use 'vim filename.py' to create and edit files`);
     }
 }
 
@@ -292,9 +282,9 @@ Welcome to my project directory! Here you'll find various software projects I've
 Interactive Flashcards System - A timed learning application with score tracking.
 Built with Go backend and vanilla JavaScript frontend.
 
-### 2. unleashedjs/
-UnleashedJS Compiler - A JavaScript compiler written in Go and C.
-Brings systems programming power to JavaScript with low-level control and performance optimization.
+### 2. cloudsimulator/
+CloudSimulator - AWS services in retro BIOS interface style.
+Practice AWS CLI commands in a safe simulation environment with authentic BIOS navigation.
 
 ### 3. text-adventure/
 Text Adventure Game Engine - Interactive story-based game platform (Coming Soon).
@@ -346,74 +336,70 @@ func main() {
     log.Fatal(http.ListenAndServe(":8080", nil))
 }`
         };
-    } else if (directory === 'projects/unleashedjs') {
+    } else if (directory === 'projects/cloudsimulator') {
         return {
-            'README.md': `# UnleashedJS Compiler
+            'README.md': `# CloudSimulator
 
-A JavaScript compiler that brings systems programming power to JavaScript.
+A BIOS-style AWS cloud services simulator that provides an interactive learning environment for AWS CLI commands.
 
 ## Overview
 
-UnleashedJS is a next-generation JavaScript compiler written in Go and C that provides:
-- **Low-level control**: Direct memory management and pointer operations
-- **Systems programming**: Access to system calls and hardware interfaces  
-- **Performance optimization**: Compile-time optimizations and native code generation
-- **C interoperability**: Seamless integration with existing C libraries
-- **Zero-cost abstractions**: High-level constructs with no runtime overhead
-
-## Architecture
-
-### Compiler Pipeline (Go)
-- Lexical analysis and parsing
-- AST optimization
-- Code generation
-- Native binary output
-
-### Runtime System (C)
-- Memory management
-- Garbage collector
-- System call interface
-- Native library bindings
+CloudSimulator presents AWS services in a retro BIOS interface style, allowing users to explore and practice AWS CLI commands in a safe, simulated environment. Each service provides common AWS CLI commands that can be executed to see mock responses.
 
 ## Features
 
-- ⚡ **High Performance**: Compiled native binaries
-- 🔧 **Low-Level Access**: Pointers, manual memory management
-- 🔗 **C Integration**: Call C functions directly
-- 🎯 **Zero Runtime**: No VM or interpreter overhead
-- 📦 **Small Binaries**: Optimized output size
+- **BIOS-Style Interface**: Retro blue BIOS design with grid layout for services
+- **Interactive Terminal**: Click-to-execute commands with simulated AWS CLI responses
+- **12 AWS Services**: EC2, S3, RDS, Lambda, VPC, IAM, CloudWatch, SNS, SQS, CloudFormation, API Gateway, DynamoDB
+- **Mock Responses**: Realistic JSON and text responses for learning purposes
+- **Keyboard Navigation**: ESC key for navigation
+- **Modular Design**: Separated CSS and JavaScript files for maintainability
 
-## Status: In Development
+## AWS Services Included
 
-Currently implementing core compiler features and runtime system.`,
-            'main.go': `package main
+1. **EC2** - Elastic Compute Cloud (instances, security groups)
+2. **S3** - Simple Storage Service (buckets, objects)
+3. **RDS** - Relational Database Service (databases, snapshots)
+4. **Lambda** - Serverless Compute (functions, invocation)
+5. **VPC** - Virtual Private Cloud (networks, subnets)
+6. **IAM** - Identity & Access Management (users, roles, policies)
+7. **CloudWatch** - Monitoring & Logging (metrics, logs)
+8. **SNS** - Simple Notification Service (topics, subscriptions)
+9. **SQS** - Simple Queue Service (queues, messages)
+10. **CloudFormation** - Infrastructure as Code (stacks, templates)
+11. **API Gateway** - API Management (APIs, deployments)
+12. **DynamoDB** - NoSQL Database (tables, items)
 
-import (
-    "fmt"
-    "os"
-    "unleashedjs/compiler"
-    "unleashedjs/runtime"
-)
+## Educational Purpose
 
-func main() {
-    if len(os.Args) < 2 {
-        fmt.Println("Usage: ujs <source.js>")
-        os.Exit(1)
-    }
-    
-    sourceFile := os.Args[1]
-    compiler := compiler.New()
-    
-    // Compile JavaScript to native binary
-    binary, err := compiler.Compile(sourceFile)
-    if err != nil {
-        fmt.Printf("Compilation error: %v\\n", err)
-        os.Exit(1)
-    }
-    
-    // Execute compiled binary
-    runtime.Execute(binary)
-}`
+This simulator is designed for:
+- AWS CLI learning and practice
+- Understanding AWS service relationships
+- Safe experimentation with commands
+- Retro computing nostalgia`,
+            'name-convention.md': `# CloudSimulator Naming Conventions
+
+This document outlines the naming conventions used in the CloudSimulator project.
+
+## File Structure
+- templates/cloudsimulator.html - Main HTML template
+- static/cloudsimulator.css - BIOS-style CSS
+- static/cloudsimulator.js - Interactive functionality
+
+## JavaScript Functions
+- All functions follow camelCase convention
+- Functions are organized in CloudSimulator object
+- Small, testable functions for unit testing
+
+## CSS Classes
+- kebab-case for class names
+- Semantic naming (e.g., .service-item, .bios-header)
+- BEM methodology where applicable
+
+## AWS Service Keys
+- Lowercase service identifiers
+- Match AWS CLI service names where possible
+- Examples: ec2, s3, rds, lambda, vpc, iam`
         };
     } else if (directory === 'projects/text-adventure') {
         return {
@@ -570,11 +556,11 @@ function showProjects() {
    - Built with Go backend and vanilla JavaScript
    - Features: User accounts, course management, leaderboards
 
-2. UnleashedJS Compiler
-   - JavaScript compiler written in Go and C
-   - Brings systems programming power to JavaScript
-   - Features: Low-level control, performance optimization, native bindings
-   - Status: In Development
+2. CloudSimulator
+   - AWS services in retro BIOS interface style
+   - Practice AWS CLI commands in safe simulation environment
+   - Features: 12 AWS services, interactive commands, BIOS navigation, mock responses
+   - Status: Active
 
 3. Text Adventure Game Engine
    - Interactive story-based game platform
@@ -709,6 +695,7 @@ async function performLogin(username, password) {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({
                 username: username,
                 password: password
@@ -722,7 +709,7 @@ async function performLogin(username, password) {
             terminalState.isLoggedIn = true;
             updatePrompt();
             return `✅ Welcome back, ${username}! You now have full access to the system.
-You can now save and load files using vim commands like ':o filename.py'`;
+You can now save and load files using 'vim filename.py'`;
         } else {
             return `❌ Login failed: ${result.message}
 Don't have an account? Use 'register' to create one.`;
@@ -927,6 +914,11 @@ function reinitializeInput() {
     cursor = document.querySelector('.cursor');
     
     if (commandInput && typedText) {
+        // Remove any existing listeners first to prevent duplicates
+        commandInput.removeEventListener('keydown', handleKeyPress);
+        commandInput.removeEventListener('input', handleInput);
+        commandInput.removeEventListener('blur', ensureFocus);
+        
         // Re-setup input events
         commandInput.addEventListener('keydown', handleKeyPress);
         commandInput.addEventListener('input', handleInput);
@@ -984,8 +976,8 @@ function changeDirectory(path) {
             terminalState.currentDirectory = 'projects/flashcards';
             updatePrompt();
             return '';
-        } else if (path === 'unleashedjs') {
-            terminalState.currentDirectory = 'projects/unleashedjs';
+        } else if (path === 'cloudsimulator') {
+            terminalState.currentDirectory = 'projects/cloudsimulator';
             updatePrompt();
             return '';
         } else if (path === 'text-adventure') {
@@ -1010,26 +1002,17 @@ function runProject() {
             window.location.href = '/projects/flashcards';
         }, 2000);
         return '';
-    } else if (terminalState.currentDirectory === 'projects/unleashedjs') {
-        addOutput('Building UnleashedJS compiler with C runtime...');
-        addOutput('go build -o ujs unleashedjs.go');
-        addOutput('✓ C FFI integration successful');
-        addOutput('✓ Runtime compiled successfully');
+    } else if (terminalState.currentDirectory === 'projects/cloudsimulator') {
+        addOutput('Launching CloudSimulator BIOS interface...');
+        addOutput('Loading AWS service configurations...');
+        addOutput('✓ BIOS styling loaded');
+        addOutput('✓ Arrow key navigation enabled');
+        addOutput('✓ 12 AWS services configured');
         addOutput('');
-        addOutput('Running UnleashedJS demo...');
+        addOutput('Opening CloudSimulator...');
         setTimeout(() => {
-            // Simulate running the compiled ujs binary
-            fetch('/run-ujs-demo')
-                .then(response => response.text())
-                .then(output => {
-                    addOutput('--- UnleashedJS Demo Output ---');
-                    addOutput(output);
-                    addOutput('--- End Demo Output ---');
-                })
-                .catch(error => {
-                    addOutput('Error running UnleashedJS demo: ' + error.message);
-                });
-        }, 1000);
+            window.location.href = '/cloudsimulator';
+        }, 2000);
         return '';
     } else if (terminalState.currentDirectory === 'projects/text-adventure') {
         return 'This project is still in development. Coming soon!';
@@ -1056,10 +1039,12 @@ function handleProjectSelection(projectNumber) {
             terminalState.awaitingFlashcardChoice = true;
             break;
         case 2:
-            addOutput('Entering UnleashedJS Compiler directory...');
-            terminalState.currentDirectory = 'projects/unleashedjs';
+            addOutput('Entering CloudSimulator directory...');
+            terminalState.currentDirectory = 'projects/cloudsimulator';
             updatePrompt();
-            addOutput('JavaScript compiler bringing systems programming to JS!');
+            addOutput('AWS services in retro BIOS interface style!');
+            addOutput('');
+            addOutput('Type "run" to launch the BIOS simulator interface.');
             break;
         case 3:
             addOutput('Entering Text Adventure Game directory...');
@@ -1828,59 +1813,65 @@ function exitMessageMode() {
     addOutput('Type "help" for available commands.');
 }
 
-function showVimKeyBindings() {
-    if (!vimEditor || !vimEditor.isEnabled) {
-        return 'Vim mode is not enabled. Type "vim-mode" to enable it first.';
+function openVimEditor(filename) {
+    if (!filename) {
+        filename = 'untitled.py';
     }
-
-    return `📚 Vim Key Bindings (Modal Editing):
-
-🔄 Mode Switching:
-  ESC     - Enter Normal mode
-  i       - Enter Insert mode (before cursor)
-  a       - Enter Insert mode (after cursor)
-  I       - Insert at beginning of line
-  A       - Insert at end of line
-  o       - Open line below (Insert mode)
-  O       - Open line above (Insert mode)
-
-🧭 Navigation (Normal mode):
-  h       - Move left
-  l       - Move right  
-  w       - Move to next word
-  b       - Move to previous word
-  e       - Move to end of word
-  0       - Move to beginning of line
-  $       - Move to end of line
-
-✏️  Editing (Normal mode):
-  x       - Delete character under cursor
-  X       - Delete character before cursor
-  r       - Replace character (then type new char)
-  s       - Substitute character (delete and insert)
-  D       - Delete to end of line
-  C       - Change to end of line (delete and insert)
-
-📋 Copy/Paste (Normal mode):
-  y       - Yank (copy) entire line
-  p       - Paste after cursor
-  P       - Paste before cursor
-  d       - Delete (cut) entire line
-
-👁️  Visual Mode:
-  v       - Enter visual mode
-  V       - Select entire line
-  y       - Yank selected text
-  d/x     - Delete selected text
-  c       - Change selected text
-
-💡 Current mode is shown on the right side of the input!
-   Try: ESC → h/l/w/b → i → type → ESC`;
+    
+    // Create and show the modal vim editor
+    if (window.VimEditor) {
+        const vimEditor = new window.VimEditor();
+        const modal = vimEditor.createModal(filename);
+        document.body.appendChild(modal);
+        
+        // Load file content into the vim editor
+        loadFileIntoVimEditor(filename, vimEditor);
+        
+        // Make addOutput available to vim editor
+        window.addOutput = addOutput;
+    } else {
+        return 'Error: Vim editor not available';
+    }
+    
+    return ''; // Don't show any output, vim will handle display
 }
+
+async function loadFileIntoVimEditor(filename, vimEditor) {
+    try {
+        const response = await fetch(`/api/files/load?filename=${encodeURIComponent(filename)}`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            const fileData = await response.json();
+            vimEditor.initializeContent(fileData.content);
+        } else if (response.status === 404) {
+            // New file - use default content
+            vimEditor.initializeContent();
+        } else {
+            vimEditor.initializeContent();
+        }
+    } catch (error) {
+        // New file or error - start with default content
+        vimEditor.initializeContent();
+    }
+}
+
 
 // Terminal UI functions
 function addOutput(output, isCommand = false) {
     if (output === '') return;
+    
+    // Handle test environment where terminalContent might not exist
+    if (!terminalContent) {
+        terminalContent = document.getElementById('terminalContent');
+        if (!terminalContent) {
+            // In test environment, just track the output
+            if (typeof global !== 'undefined' && global.addOutputCalls) {
+                global.addOutputCalls.push(output);
+            }
+            return;
+        }
+    }
     
     const currentLine = document.querySelector('.current-line');
     const outputDiv = document.createElement('div');
@@ -1897,24 +1888,47 @@ function addOutput(output, isCommand = false) {
 }
 
 function getPrompt() {
-    return `${terminalState.userName}@portfolio:${terminalState.currentDirectory}$`;
+    return `${terminalState.userName}@terminal:${terminalState.currentDirectory}$`;
 }
 
 function updatePrompt() {
-    // Update the current line's prompt
+    // Create a fresh command line with updated prompt
+    refreshCurrentLine();
+}
+
+function refreshCurrentLine() {
     const currentLine = document.querySelector('.current-line');
-    if (currentLine) {
-        const promptElement = currentLine.querySelector('.prompt');
-        if (promptElement) {
-            promptElement.textContent = getPrompt();
-        }
-    }
+    if (!currentLine) return;
+    
+    // Create new current line with updated prompt
+    const newCurrentLine = document.createElement('div');
+    newCurrentLine.className = 'terminal-line current-line';
+    newCurrentLine.innerHTML = `
+        <span class="prompt">${getPrompt()}</span>
+        <span id="typedText" class="typed-text"></span>
+        <span class="cursor">_</span>
+        <input type="text" id="commandInput" class="command-input" autocomplete="off" autofocus>
+    `;
+    
+    // Replace the old current line with the new one
+    currentLine.parentNode.replaceChild(newCurrentLine, currentLine);
+    
+    // Update DOM references
+    commandInput = document.getElementById('commandInput');
+    typedText = document.getElementById('typedText');
+    cursor = document.querySelector('.cursor');
+    
+    // Ensure focus and setup events for new input
+    ensureFocus();
+    setupInputEvents();
+    scrollToBottom();
 }
 
 function scrollToBottom() {
     const terminal = document.getElementById('terminal');
     terminal.scrollTop = terminal.scrollHeight;
 }
+
 
 // Input handling functions
 function processCommand(input) {
@@ -1996,10 +2010,6 @@ function processCommand(input) {
 }
 
 function handleKeyPress(event) {
-    // If vim mode is enabled and not in insert mode, let vim.js handle the keys
-    if (vimEditor && vimEditor.isEnabled && vimEditor.mode !== 'insert') {
-        return; // Let vim.js handle all keys in normal/visual mode
-    }
     
     if (event.key === 'Enter') {
         event.preventDefault();
@@ -2034,9 +2044,16 @@ function handleKeyPress(event) {
 }
 
 function handleInput(event) {
+    // Don't update display if in vim mode
+    if (terminalState.vimMode) {
+        return;
+    }
+    
     // Update the visual display of typed text
     if (typedText) {
-        typedText.textContent = event.target.value;
+        // Replace spaces with non-breaking spaces to ensure they're visible
+        const value = event.target.value.replace(/ /g, '\u00A0');
+        typedText.textContent = value;
     }
 }
 
@@ -2156,6 +2173,9 @@ function navigateHistory(direction) {
 
 
 // Focus management functions
+// Global flag to control terminal focus management
+window.terminalFocusEnabled = true;
+
 function ensureFocus(event) {
     // Don't steal focus if user is selecting text
     if (window.getSelection && window.getSelection().toString().length > 0) {
@@ -2171,22 +2191,23 @@ function ensureFocus(event) {
         }
     }
     
+    // Always maintain focus on input to capture keyboard events, even in vim mode
     if (commandInput) {
         commandInput.focus();
     }
 }
 
-function preventBlur(event) {
-    // Prevent input from losing focus
-    event.preventDefault();
-    ensureFocus();
-}
 
 function setupFocusEvents() {
     if (!commandInput) return;
     
     // Re-focus when clicking anywhere, but allow text selection
     document.addEventListener('click', (event) => {
+        // Don't focus if vim modal editor is open
+        if (document.querySelector('.vim-editor-modal')) {
+            return;
+        }
+        
         // Don't focus if user is selecting text or clicked on selectable content
         const selection = window.getSelection();
         if (selection && selection.toString().length > 0) {
@@ -2200,6 +2221,11 @@ function setupFocusEvents() {
     // Don't interfere with mousedown/mouseup for text selection
     // Only handle blur events
     commandInput.addEventListener('blur', (event) => {
+        // Don't refocus if vim modal editor is open
+        if (document.querySelector('.vim-editor-modal')) {
+            return;
+        }
+        
         // Delay refocus to allow text selection
         setTimeout(() => ensureFocus(event), 50);
     });
@@ -2241,8 +2267,6 @@ function setupEscapeKeyHandler() {
 }
 
 // Initialize terminal
-// Global Vim editor instance
-let vimEditor = null;
 
 function initTerminal() {
     initializeInputFocus();
@@ -2251,46 +2275,13 @@ function initTerminal() {
     setupInputEvents();
     setupModalEvents();
     setupEscapeKeyHandler();
-    initializeVimEditor();
 }
 
-function initializeVimEditor() {
-    const commandInput = document.getElementById('commandInput');
-    
-    if (commandInput && typeof VimEditor !== 'undefined') {
-        vimEditor = new VimEditor(commandInput);
-        console.log('✅ Vim editor initialized (disabled by default)');
-    } else {
-        // Try again after a short delay to ensure vim.js is fully loaded
-        setTimeout(() => {
-            if (typeof VimEditor !== 'undefined' && document.getElementById('commandInput')) {
-                vimEditor = new VimEditor(document.getElementById('commandInput'));
-                console.log('✅ Vim editor initialized (delayed)');
-            }
-        }, 100);
-    }
-}
 
-function toggleVimMode() {
-    if (vimEditor) {
-        vimEditor.toggle();
-        const status = vimEditor.isEnabled ? 'enabled' : 'disabled';
-        return `🎯 Vim mode ${status}. ${vimEditor.isEnabled ? 'Press ESC for normal mode.' : ''}`;
-    }
-    
-    // Try to initialize vim editor if it doesn't exist yet
-    initializeVimEditor();
-    
-    if (vimEditor) {
-        vimEditor.toggle();
-        const status = vimEditor.isEnabled ? 'enabled' : 'disabled';
-        return `🎯 Vim mode ${status}. ${vimEditor.isEnabled ? 'Press ESC for normal mode.' : ''}`;
-    }
-    
-    return '❌ Vim editor not available - make sure vim.js is loaded';
-}
 
-// Make functions globally accessible for vim.js
+
+
+// Make functions globally accessible
 window.clearTerminal = clearTerminal;
 window.navigateHistory = navigateHistory;
 
@@ -2305,7 +2296,7 @@ if (typeof module !== 'undefined' && module.exports) {
         showHelp,
         getHomeDirectoryFiles,
         getFlashcardsDirectoryFiles,
-        getUnleashedJSDirectoryFiles,
+        getCloudSimulatorDirectoryFiles,
         getTextAdventureDirectoryFiles,
         getPortfolioTerminalDirectoryFiles,
         getProjectsDirectoryFiles,
@@ -2325,6 +2316,8 @@ if (typeof module !== 'undefined' && module.exports) {
         handleProjectSelection,
         processCommand,
         getPrompt,
+        updatePrompt,
+        refreshCurrentLine,
         navigateHistory,
         ensureFocus,
         setupFocusEvents,
@@ -2349,9 +2342,7 @@ if (typeof module !== 'undefined' && module.exports) {
         sendMessage,
         exitMessageMode,
         isValidEmail,
-        initializeVimEditor,
-        toggleVimMode,
-        showVimKeyBindings,
+        openVimEditor,
         handleTabCompletion,
         getCompletions,
         getPathCompletions,

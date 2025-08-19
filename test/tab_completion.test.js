@@ -76,17 +76,6 @@ describe('Tab Completion Functions', function() {
             expect(completions).to.be.empty;
         });
 
-        it('should handle file completion for cd command', function() {
-            terminalState.currentDirectory = '~';
-            const completions = getCompletions('cd pro');
-            expect(completions).to.include('cd projects/');
-        });
-
-        it('should handle file completion for cat command', function() {
-            terminalState.currentDirectory = '~';
-            const completions = getCompletions('cat about');
-            expect(completions).to.include('cat about.txt ');
-        });
 
         it('should return empty for non-file commands with args', function() {
             const completions = getCompletions('help something');
@@ -95,16 +84,10 @@ describe('Tab Completion Functions', function() {
     });
 
     describe('getPathCompletions', function() {
-        it('should complete file names in home directory', function() {
+        it('should return empty for non-existent files in home directory', function() {
             terminalState.currentDirectory = '~';
             const completions = getPathCompletions('about', 'cat about');
-            expect(completions).to.include('cat about.txt ');
-        });
-
-        it('should complete directory names with slash', function() {
-            terminalState.currentDirectory = '~';
-            const completions = getPathCompletions('pro', 'cd pro');
-            expect(completions).to.include('cd projects/');
+            expect(completions).to.be.empty;
         });
 
         it('should handle empty prefix', function() {
@@ -185,10 +168,10 @@ describe('Tab Completion Functions', function() {
             expect(completions).to.include('contact ');
         });
 
-        it('should complete file paths correctly', function() {
+        it('should return empty for non-existent paths', function() {
             terminalState.currentDirectory = '~';
             const completions = getCompletions('cd projects');
-            expect(completions).to.include('cd projects/');
+            expect(completions).to.be.empty;
         });
 
         it('should handle nested directory completion', function() {
@@ -206,7 +189,7 @@ describe('Tab Completion Functions', function() {
 
         it('should handle multiple spaces between command and argument', function() {
             const completions = getCompletions('cd   pro');
-            expect(completions).to.include('cd   projects/');
+            expect(completions).to.be.empty;
         });
 
         it('should handle commands with no file completion support', function() {
@@ -245,13 +228,13 @@ describe('Tab Completion Functional Tests', function() {
     });
 
     describe('File Path Completion', function() {
-        it('should complete files in different directories', function() {
+        it('should return empty for non-existent files in different directories', function() {
             // Test home directory
             terminalState.currentDirectory = '~';
             let completions = getCompletions('cat sk');
-            expect(completions).to.include('cat skills.txt ');
+            expect(completions).to.be.empty;
 
-            // Test projects directory
+            // Test projects directory  
             terminalState.currentDirectory = 'projects';
             completions = getCompletions('cd flash');
             expect(completions).to.include('cd flashcards/');

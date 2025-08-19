@@ -1,0 +1,162 @@
+# Test Failures Report
+
+## Backend (Go Tests)
+❌ **1 backend tests failing** out of 155 total tests
+
+### Backend Failing Tests:
+
+## Frontend (JavaScript Tests)
+❌ **74 tests failing** out of 181 total tests
+
+### Frontend Failing Test Names:
+- should login successfully with any username
+- should accept different usernames
+- should be case insensitive
+- should navigate back from project directory
+- should navigate to projects directory
+- should run flashcards project
+- should handle project 1 selection
+- should handle project 2 selection
+- should handle project 3 selection
+- should handle project 4 selection
+- should handle invalid project numbers
+- should handle commands with arguments
+- should maintain state across command executions
+- should handle guest choice
+- should handle login choice when not logged in
+- should handle login choice when logged in
+- should handle directory choice
+- should be case insensitive
+- should select valid course
+- should handle invalid course number
+- should handle non-numeric input
+- should handle quit command
+- should handle course selection
+- should handle case insensitive quit
+- should handle next command when awaiting next
+- should reject non-next commands when awaiting next
+- should handle case insensitive next command
+- should reset flashcards state on exit
+- should require login for progress saving
+- should allow progress saving when logged in
+- should reset awaitingNext flag
+- should clear stored data after processing
+- should handle game completion scenario
+- should handle next card scenario
+- should display guest mode message
+- should handle not logged in state
+- should handle logged in state
+- should change to flashcards directory
+- should preserve command structure
+- should handle whitespace in input
+- should return a div element with vim-editor-modal class
+- should have correct positioning styles
+- should have correct display and z-index styles
+- should return a div element with vim-editor class
+- should have flex display and column direction
+- should have correct dimensions
+- should return a div element with header content
+- should include command hints
+- should have correct background styling
+- should return a div element with vim-line-numbers class
+- should have correct styling for line numbers
+- should have monospace font styling
+- should return a textarea element
+- should be positioned off-screen
+- should return a pre element with vim-content class
+- should have correct text styling
+- should have zero margin and proper padding
+- should return a span element with vim-cursor class
+- should be positioned absolutely
+- should have correct initial dimensions
+- should have animation applied
+- should add cursor styles to document head if not present
+- should not duplicate styles if already present
+- should return a div element with proper children
+- should have flex styling
+- should return a div element with line numbers and text container
+- should have flex display styling
+- should return a div element with vim-status class
+- should have left and right status spans
+- should have correct styling
+- should assemble all components into a complete modal
+- should set currentFilename property
+- should set modal instance property
+- should return the created modal element
+- User Authentication
+- User Authentication
+- User Authentication
+- Directory Navigation
+- Directory Navigation
+- Directory Navigation
+- Project Navigation
+- Project Navigation
+- Project Navigation
+- Project Navigation
+- Project Navigation
+- Integration Tests
+- Integration Tests
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Integration
+- Flashcards Terminal Display Functions
+- Flashcards Terminal Display Functions
+- Flashcards Terminal Display Functions
+- Flashcards Terminal Display Functions
+- Tab Completion Functions
+- Tab Completion Functions
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+- VimEditor
+
+---
+**Summary:** 107 passing ✅ | 74 failing ❌ | 1 backend failures

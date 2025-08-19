@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudSimulator BIOS - Allan</title>
+    <link rel="stylesheet" href="/static/cloudsimulator.css">
+</head>
+<body>
+    <div class="bios-screen">
+        <div class="bios-header">
+            <div class="bios-title">AWS Cloud Simulator Setup Utility</div>
+            <div class="bios-version">Copyright (C) 2024 Allan Systems, Inc.</div>
+        </div>
+        
+        <div class="bios-menu">
+            <div class="menu-item active">Main</div>
+            <div class="menu-item">Advanced</div>
+            <div class="menu-item">Security</div>
+            <div class="menu-item">Power</div>
+            <div class="menu-item">Boot</div>
+            <div class="menu-item">Exit</div>
+        </div>
+        
+        <div class="bios-content">
+            <div class="services-list">
+                <div class="service-item selected" data-service="ec2">EC2 - Elastic Compute Cloud</div>
+                <div class="service-item" data-service="s3">S3 - Simple Storage Service</div>
+                <div class="service-item" data-service="rds">RDS - Relational Database</div>
+                <div class="service-item" data-service="lambda">Lambda - Serverless Compute</div>
+                <div class="service-item" data-service="vpc">VPC - Virtual Private Cloud</div>
+                <div class="service-item" data-service="iam">IAM - Access Management</div>
+                <div class="service-item" data-service="cloudwatch">CloudWatch - Monitoring</div>
+                <div class="service-item" data-service="sns">SNS - Notification Service</div>
+                <div class="service-item" data-service="sqs">SQS - Queue Service</div>
+                <div class="service-item" data-service="cloudformation">CloudFormation - IaC</div>
+                <div class="service-item" data-service="apigateway">API Gateway - Management</div>
+                <div class="service-item" data-service="dynamodb">DynamoDB - NoSQL Database</div>
+            </div>
+            
+            <div class="service-details">
+                <div class="service-name" id="detailServiceName">EC2 - Elastic Compute Cloud</div>
+                <div class="service-description" id="detailServiceDesc">
+                    Amazon Elastic Compute Cloud (EC2) provides scalable computing capacity in the cloud. Launch virtual servers, configure security and networking, and manage storage.
+                </div>
+                
+                <div class="service-status">
+                    Status: <span class="status-online">Online</span> | Region: us-east-1 | Instances: 0
+                </div>
+                
+                <div class="service-commands">
+                    <h4>Available Commands:</h4>
+                    <div id="commandsList">
+                        <div class="command-item" onclick="CloudSimulator.executeCommand('aws ec2 describe-instances')">aws ec2 describe-instances</div>
+                        <div class="command-item" onclick="CloudSimulator.executeCommand('aws ec2 run-instances --image-id ami-12345678')">aws ec2 run-instances --image-id ami-12345678</div>
+                        <div class="command-item" onclick="CloudSimulator.executeCommand('aws ec2 terminate-instances --instance-ids i-123')">aws ec2 terminate-instances --instance-ids i-123</div>
+                        <div class="command-item" onclick="CloudSimulator.executeCommand('aws ec2 describe-security-groups')">aws ec2 describe-security-groups</div>
+                        <div class="command-item" onclick="CloudSimulator.executeCommand('aws ec2 create-security-group --group-name mysg')">aws ec2 create-security-group --group-name mysg</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bios-footer">
+            <div class="footer-commands">
+                <span>↑↓: Select | Enter: Execute | F1: Help | F10: Exit</span>
+                <span><a href="/" style="color: #000000; text-decoration: none;">ESC: Back to Terminal</a></span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="terminal-overlay" id="terminalOverlay">
+        <div class="terminal-window">
+            <button class="close-btn" onclick="CloudSimulator.closeTerminal()">&times;</button>
+            <div class="terminal-content" id="terminalContent">
+                <div class="blinking">Initializing service...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/cloudsimulator.js"></script>
+</body>
+</html>

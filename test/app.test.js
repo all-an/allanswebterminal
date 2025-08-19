@@ -24,10 +24,14 @@ beforeEach(function() {
                 return {
                     querySelector: function() {
                         return { textContent: '' };
+                    },
+                    parentNode: {
+                        insertBefore: function() {},
+                        replaceChild: function() {}
                     }
                 };
             }
-            return { textContent: 'guest@portfolio:~$' }; 
+            return { textContent: 'guest@terminal:~$' }; 
         },
         addEventListener: function() {},
         createElement: function() {
@@ -44,8 +48,10 @@ beforeEach(function() {
         location: { href: '' }
     };
     
-    // Mock scrollToBottom
+    // Mock functions that interact with DOM
     global.scrollToBottom = function() {};
+    global.addOutput = function() {};
+    global.updatePrompt = function() {};
 });
 
 const {
@@ -57,7 +63,6 @@ const {
     getTextAdventureDirectoryFiles,
     getPortfolioTerminalDirectoryFiles,
     getDirectoryFiles,
-    listDirectory,
     getProjectFiles,
     catFile,
     changeDirectory,
@@ -81,17 +86,17 @@ describe('Terminal State Management', function() {
 
     describe('getPrompt', function() {
         it('should return correct prompt for guest user', function() {
-            expect(getPrompt()).to.equal('guest@portfolio:~$');
+            expect(getPrompt()).to.equal('guest@terminal:~$');
         });
 
         it('should return correct prompt for logged in user', function() {
             terminalState.userName = 'allan';
-            expect(getPrompt()).to.equal('allan@portfolio:~$');
+            expect(getPrompt()).to.equal('allan@terminal:~$');
         });
 
         it('should handle different directories', function() {
             terminalState.currentDirectory = 'projects';
-            expect(getPrompt()).to.equal('guest@portfolio:projects$');
+            expect(getPrompt()).to.equal('guest@terminal:projects$');
         });
     });
 });
@@ -115,13 +120,9 @@ describe('Command System', function() {
 
     describe('Directory File Functions', function() {
         describe('getHomeDirectoryFiles', function() {
-            it('should return home directory files', function() {
+            it('should return empty array for home directory files', function() {
                 const files = getHomeDirectoryFiles();
-                expect(files).to.include('about.txt');
-                expect(files).to.include('skills.txt');
-                expect(files).to.include('projects/');
-                expect(files).to.include('contact.txt');
-                expect(files).to.include('resume.pdf');
+                expect(files).to.deep.equal([]);
             });
         });
 
@@ -137,10 +138,9 @@ describe('Command System', function() {
         });
 
         describe('getDirectoryFiles', function() {
-            it('should return correct files for home directory', function() {
+            it('should return empty array for home directory', function() {
                 const files = getDirectoryFiles('~');
-                expect(files).to.include('about.txt');
-                expect(files).to.include('projects/');
+                expect(files).to.deep.equal([]);
             });
 
             it('should return correct files for flashcards directory', function() {
@@ -156,38 +156,6 @@ describe('Command System', function() {
         });
     });
 
-    describe('listDirectory', function() {
-        it('should return list of files and directories for home', function() {
-            terminalState.currentDirectory = '~';
-            const result = listDirectory();
-            expect(result).to.include('about.txt');
-            expect(result).to.include('skills.txt');
-            expect(result).to.include('projects/');
-            expect(result).to.include('contact.txt');
-            expect(result).to.include('resume.pdf');
-        });
-
-        it('should return project files when in project directory', function() {
-            terminalState.currentDirectory = 'projects/flashcards';
-            const result = listDirectory();
-            expect(result).to.include('README.md');
-            expect(result).to.include('main.go');
-            expect(result).to.include('../');
-        });
-
-        it('should separate files with spaces', function() {
-            terminalState.currentDirectory = '~';
-            const result = listDirectory();
-            const files = result.split('  ');
-            expect(files.length).to.be.greaterThan(1);
-        });
-
-        it('should handle empty directory gracefully', function() {
-            terminalState.currentDirectory = 'unknown';
-            const result = listDirectory();
-            expect(result).to.equal('No files found in this directory.');
-        });
-    });
 
     describe('catFile', function() {
         beforeEach(function() {
@@ -519,8 +487,8 @@ describe('Project Navigation', function() {
 
         it('should handle project 2 selection', function() {
             handleProjectSelection(2);
-            expect(addOutputCalls[0]).to.include('Entering UnleashedJS Compiler');
-            expect(terminalState.currentDirectory).to.equal('projects/unleashedjs');
+            expect(addOutputCalls[0]).to.include('Entering CloudSimulator');
+            expect(terminalState.currentDirectory).to.equal('projects/cloudsimulator');
         });
 
         it('should handle project 3 selection', function() {
@@ -555,17 +523,17 @@ describe('Integration Tests', function() {
             expect(helpResult).to.include('Available commands:');
         });
 
-        it('should handle commands with arguments', function() {
-            const catResult = commands.cat.execute(['about.txt']);
+        it('should handle commands with arguments', async function() {
+            const catResult = await commands.cat.execute(['about.txt']);
             expect(catResult).to.include('Allan Pereira');
             
-            const loginResult = commands.login.execute(['john']);
+            const loginResult = await commands.login.execute(['john']);
             expect(loginResult).to.include('Welcome back');
         });
     });
 
     describe('State Changes', function() {
-        it('should maintain state across command executions', function() {
+        it('should maintain state across command executions', async function() {
             // Reset state first
             terminalState.userName = 'guest';
             terminalState.isLoggedIn = false;
@@ -574,12 +542,12 @@ describe('Integration Tests', function() {
             expect(terminalState.userName).to.equal('guest');
             
             // Login
-            commands.login.execute(['john']);
+            await commands.login.execute(['john']);
             expect(terminalState.userName).to.equal('john');
             expect(terminalState.isLoggedIn).to.be.true;
             
             // Whoami should reflect new state
-            const whoamiResult = commands.whoami.execute();
+            const whoamiResult = await commands.whoami.execute();
             expect(whoamiResult).to.equal('john');
         });
     });

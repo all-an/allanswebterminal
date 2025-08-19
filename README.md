@@ -1,6 +1,10 @@
-# Simple Go Web App
+# Welcome to my Web Terminal project!
 
-A minimal Go web application with database support, migrations, and comprehensive testing.
+A Go web application with database support, migrations, and comprehensive testing. Simulating a linux terminal and presenting some personal projects.
+
+## Try it live:
+
+https://allanswebterminal.onrender.com
 
 ## Features
 
@@ -46,6 +50,22 @@ The application will be available at http://localhost:8080
 
 ## Testing
 
+### Run all tests:
+
+```bash
+./run-tests.sh
+```
+
+After running all tests the coverage reports will be at:
+
+```bash
+# backend
+/coverage.html
+
+# frontend
+/coverage/index.html
+```
+
 ### Basic Tests (without database)
 ```bash
 go test ./...
@@ -67,11 +87,6 @@ Run tests with database integration:
 # Load test environment and run tests
 export $(cat .env.test | xargs)
 go test -v ./...
-```
-
-Or use the provided script:
-```bash
-./run-tests.sh
 ```
 
 ### Coverage Reports
@@ -188,7 +203,6 @@ The JavaScript tests are organized into:
 - Comprehensive error handling
 
 **Current Frontend Test Coverage:**
-- 22 passing tests
 - Tests cover all utility functions
 - Mock DOM environment with jsdom
 - Comprehensive form validation testing

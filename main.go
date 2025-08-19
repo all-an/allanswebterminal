@@ -5,13 +5,13 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os/exec"
 
 	"allanswebterminal/db"
-	"allanswebterminal/handlers/messages"
-	"allanswebterminal/handlers/flashcards"
-	"allanswebterminal/handlers/login"
 	"allanswebterminal/handlers/files"
+	"allanswebterminal/handlers/flashcards"
+	"allanswebterminal/handlers/iam"
+	"allanswebterminal/handlers/login"
+	"allanswebterminal/handlers/messages"
 
 	"github.com/joho/godotenv"
 )
@@ -71,7 +71,7 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/projects", projectsHandler)
-	
+
 	// Auth routes
 	http.HandleFunc("/login", login.LoginPageHandler)
 	http.HandleFunc("/register", login.RegisterPageHandler)
@@ -79,7 +79,7 @@ func main() {
 	http.HandleFunc("/api/login", login.LoginAPIHandler)
 	http.HandleFunc("/api/register", login.RegisterAPIHandler)
 	http.HandleFunc("/api/check-username", login.CheckUsernameAPIHandler)
-	
+
 	// Flashcards routes
 	http.HandleFunc("/flashcards", flashcards.FlashcardsPageHandler)
 	http.HandleFunc("/api/flashcards/courses", flashcards.CoursesAPIHandler)
@@ -87,32 +87,41 @@ func main() {
 	http.HandleFunc("/api/flashcards/start", flashcards.StartGameHandler)
 	http.HandleFunc("/api/flashcards/start-guest", flashcards.StartGuestGameHandler)
 	http.HandleFunc("/api/flashcards/answer", flashcards.SubmitAnswerHandler)
-	
+
 	// Messages route
 	http.HandleFunc("/api/messages", messages.MessagesHandler)
-	
+
 	// File management routes
 	http.HandleFunc("/api/files/save", files.SaveFileHandler)
 	http.HandleFunc("/api/files/load", files.LoadFileHandler)
 	http.HandleFunc("/api/files/list", files.ListFilesHandler)
 	http.HandleFunc("/api/files/delete", files.DeleteFileHandler)
 
-	// UnleashedJS demo endpoint
-	http.HandleFunc("/run-ujs-demo", func(w http.ResponseWriter, r *http.Request) {
-		// Execute the UnleashedJS demo
-		cmd := exec.Command("go", "run", "./handlers/unleashedjs/unleashedjs.go")
-		cmd.Dir = "."
-		
-		output, err := cmd.CombinedOutput()
-		if err != nil {
-			w.Header().Set("Content-Type", "text/plain")
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(fmt.Sprintf("Error running UnleashedJS demo: %v\n%s", err, string(output))))
-			return
+	// IAM endpoints
+	http.HandleFunc("/api/iam/users", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			iam.ListUsersHandler(w, r)
+		case "POST":
+			iam.CreateUserHandler(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-		
-		w.Header().Set("Content-Type", "text/plain")
-		w.Write(output)
+	})
+	http.HandleFunc("/api/iam/roles", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			iam.ListRolesHandler(w, r)
+		case "POST":
+			iam.CreateRoleHandler(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
+	// CloudSimulator endpoint
+	http.HandleFunc("/cloudsimulator", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "templates/cloudsimulator.html")
 	})
 
 	fmt.Println("Server running at http://localhost:8080")
